@@ -27,10 +27,10 @@ public class LoginDataSource {
             User user = users.get(username);
             if(!user.getPassword().equals(password)) throw new Exception("Invalid login!");
 
-            LoggedInUser loggedUser =
+            LoggedInUser loggedInUser =
                     new LoggedInUser(user.getUserId(),
                             user.getUsername());
-            return new Result.Success<>(loggedUser);
+            return new Result.Success<>(loggedInUser);
         } catch (Exception e) {
             return new Result.Error(new IOException("Error logging in", e));
         }
@@ -41,10 +41,10 @@ public class LoginDataSource {
             User user = new User(java.util.UUID.randomUUID().toString(),
                                 username, password, fullname);
             users.put(username, user);
-            LoggedInUser loggedUser =
+            LoggedInUser loggedInUser =
                     new LoggedInUser(user.getUserId(),
                             user.getUsername());
-            return new Result.Success<>(loggedUser);
+            return new Result.Success<>(loggedInUser);
         } catch (Exception e) {
             return new Result.Error(new IOException("Error logging in", e));
         }

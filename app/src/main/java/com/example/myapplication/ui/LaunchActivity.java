@@ -9,6 +9,7 @@ import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 
 import com.example.myapplication.R;
+import com.example.myapplication.ui.home.MainActivity;
 import com.example.myapplication.ui.login.LoginActivity;
 
 public class LaunchActivity extends AppCompatActivity {

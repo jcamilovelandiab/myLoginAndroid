@@ -12,7 +12,7 @@ import androidx.fragment.app.Fragment;
 import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProviders;
 
-import com.example.myapplication.ui.home.R;
+import com.example.myapplication.R;
 
 public class GalleryFragment extends Fragment {
 
