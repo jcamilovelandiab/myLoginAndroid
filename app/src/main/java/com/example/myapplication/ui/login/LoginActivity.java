@@ -67,15 +67,14 @@ public class LoginActivity extends AppCompatActivity {
                 }
                 loadingProgressBar.setVisibility(View.GONE);
                 if (loginResult.getError() != null) {
-                    showLoginFailed(loginResult.getError());
+                    usernameEditText.setError("Invalid Login!. Check your email or password");
                 }
                 if (loginResult.getSuccess() != null) {
                     updateUiWithUser(loginResult.getSuccess());
+                    setResult(Activity.RESULT_OK);
+                    finish(); //Complete and destroy login activity once successful
                 }
-                setResult(Activity.RESULT_OK);
 
-                //Complete and destroy login activity once successful
-                finish();
             }
         });
 
@@ -132,7 +131,5 @@ public class LoginActivity extends AppCompatActivity {
 
     }
 
-    private void showLoginFailed(@StringRes Integer errorString) {
-        Toast.makeText(getApplicationContext(), errorString, Toast.LENGTH_SHORT).show();
-    }
+
 }
