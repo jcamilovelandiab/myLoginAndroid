@@ -5,23 +5,15 @@ package com.example.myapplication.data.model;
  */
 public class LoggedInUser {
 
-    private String userId;
     private String username;
-    private String displayName;
+    private Token token;
 
-    public LoggedInUser(String userId, String username) {
-        this.userId = userId;
-        //this.displayName = displayName;
+    public LoggedInUser(String username, Token token) {
         this.username = username;
+        this.token = token;
     }
 
-    public String getUserId() {
-        return userId;
-    }
-
-    public String getDisplayName() {
-        return displayName;
-    }
+    public Token getToken(){ return token; }
 
     public String getUsername(){ return username; }
 
