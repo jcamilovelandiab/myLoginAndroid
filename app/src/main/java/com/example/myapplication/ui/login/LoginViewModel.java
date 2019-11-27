@@ -39,7 +39,8 @@ public class LoginViewModel extends ViewModel {
 
     public void requestLoginCompleted(boolean error, LoggedInUser loggedInUser){
         if(error && loggedInUser != null){
-            loginResult.setValue(new LoginResult(new LoggedInUserView(loggedInUser.getEmail())));
+            loginResult.setValue(new LoginResult(new LoggedInUserView(loggedInUser.getEmail(),
+                    loggedInUser.getToken().getAccessToken())));
         }else{
             loginResult.setValue(new LoginResult(R.string.login_failed));
         }

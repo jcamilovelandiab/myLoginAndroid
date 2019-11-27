@@ -5,7 +5,9 @@ import android.app.Activity;
 import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProviders;
 
+import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 
 import androidx.annotation.Nullable;
@@ -33,6 +35,7 @@ public class LoginActivity extends AppCompatActivity {
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_login);
+
         loginViewModel = ViewModelProviders.of(this, new LoginViewModelFactory()).get(LoginViewModel.class);
 
         final EditText emailEditText = findViewById(R.id.email);
@@ -117,6 +120,10 @@ public class LoginActivity extends AppCompatActivity {
     }
 
     private void updateUiWithUser(LoggedInUserView model) {
+        SharedPreferences.Editor sharedPref =
+                getSharedPreferences( getString( R.string.preference_file_key), Context.MODE_PRIVATE ).edit();
+        sharedPref.putString("TOKEN_KEY", model.getToken());
+
         Intent intent = new Intent(this, MainActivity.class);
         startActivity(intent);
         String welcome = getString(R.string.welcome) + model.getDisplayName()+" !";

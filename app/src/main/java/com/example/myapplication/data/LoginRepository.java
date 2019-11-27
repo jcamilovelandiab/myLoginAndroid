@@ -22,7 +22,7 @@ public class LoginRepository {
 
     private static volatile LoginRepository instance;
 
-    private AuthService authService = null;
+    private AuthService authService;
 
     private final ExecutorService executorService = Executors.newFixedThreadPool( 1 );
 
@@ -55,6 +55,7 @@ public class LoginRepository {
                     if(token == null){
                         loginViewModel.requestLoginCompleted(false,null);
                     }else{
+
                         loginViewModel.requestLoginCompleted(true, new LoggedInUser(email, token));
                     }
 

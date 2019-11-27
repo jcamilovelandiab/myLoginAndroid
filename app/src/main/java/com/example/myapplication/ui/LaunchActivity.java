@@ -20,7 +20,7 @@ public class LaunchActivity extends AppCompatActivity {
     protected void onCreate( @Nullable Bundle savedInstanceState ) {
         super.onCreate(savedInstanceState);
         SharedPreferences sharedPref =
-                getSharedPreferences(getString(R.string.preference_file_key), Context.MODE_PRIVATE);
+                getSharedPreferences( getString( R.string.preference_file_key ), Context.MODE_PRIVATE );
 
         if (sharedPref.contains(TOKEN_KEY)) {
             Intent intent = new Intent(this, MainActivity.class);
