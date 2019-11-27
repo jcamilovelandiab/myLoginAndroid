@@ -1,6 +1,18 @@
 package com.example.myapplication.data;
 
+import com.example.myapplication.data.model.AuthService;
 import com.example.myapplication.data.model.LoggedInUser;
+import com.example.myapplication.data.model.Token;
+import com.example.myapplication.data.model.User;
+import com.example.myapplication.ui.login.LoginViewModel;
+
+import java.io.IOException;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+
+import retrofit2.Response;
+import retrofit2.Retrofit;
+import retrofit2.converter.gson.GsonConverterFactory;
 
 /**
  * Class that requests authentication and user information from the remote data source and
@@ -10,46 +22,58 @@ public class LoginRepository {
 
     private static volatile LoginRepository instance;
 
-    private LoginDataSource dataSource;
+    private AuthService authService = null;
 
-    // If user credentials will be cached in local storage, it is recommended it be encrypted
-    // @see https://developer.android.com/training/articles/keystore
-    private LoggedInUser user = null;
+    private final ExecutorService executorService = Executors.newFixedThreadPool( 1 );
 
     // private constructor : singleton access
-    private LoginRepository(LoginDataSource dataSource) {
-        this.dataSource = dataSource;
+    private LoginRepository() {
+
+        Retrofit retrofit = new Retrofit.Builder()
+                .baseUrl("http:/192.168.1.143:8080") //localhost for emulator
+                .addConverterFactory(GsonConverterFactory.create())
+                .build();
+        authService = retrofit.create(AuthService.class);
     }
 
-    public static LoginRepository getInstance(LoginDataSource dataSource) {
+    public static LoginRepository getInstance() {
         if (instance == null) {
-            instance = new LoginRepository(dataSource);
+            instance = new LoginRepository();
         }
         return instance;
     }
 
-    public boolean isLoggedIn() {
-        return user != null;
-    }
+    public void login(final LoginViewModel loginViewModel, final String email, final String password) {
+        executorService.execute( new Runnable(){
+            @Override
+            public void run()
+            {
+                try{
+                    Response<Token> response =
+                            authService.login( new User( email, password ) ).execute();
+                    Token token = response.body();
+                    if(token == null){
+                        loginViewModel.requestLoginCompleted(false,null);
+                    }else{
+                        loginViewModel.requestLoginCompleted(true, new LoggedInUser(email, token));
+                    }
 
-    public void logout() {
-        user = null;
-        dataSource.logout();
-    }
-
-    private void setLoggedInUser(LoggedInUser user) {
-        this.user = user;
-        // If user credentials will be cached in local storage, it is recommended it be encrypted
-        // @see https://developer.android.com/training/articles/keystore
-    }
-
-    public Result<LoggedInUser> login(String username, String password) {
-        // handle login
-        Result<LoggedInUser> result = dataSource.login(username, password);
-        if (result instanceof Result.Success) {
-            setLoggedInUser(((Result.Success<LoggedInUser>) result).getData());
+                }
+                catch ( IOException e ){
+                    e.printStackTrace();
+                    loginViewModel.requestLoginCompleted(false,null);
+                }
+            }
+        } );
+        /*Token token = null;
+        if(email.equals("test@mail.com") && password.equals("test123")){
+            token = new Token("this is my token");
         }
-        return result;
+        if(token == null){
+            loginViewModel.requestLoginCompleted(false,null);
+        }else{
+            loginViewModel.requestLoginCompleted(true, new LoggedInUser(email, token));
+        }*/
     }
 
 }

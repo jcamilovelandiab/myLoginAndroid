@@ -2,15 +2,15 @@ package com.example.myapplication.data.model;
 
 public class User {
 
-    private String username;
+    private String email;
     private String password;
 
-    public User(String password, String fullname){
-        this.username = username;
+    public User(String email, String password){
+        this.email = email;
         this.password = password;
     }
 
-    public String getUsername(){ return this.username; }
+    public String getEmail(){ return this.email; }
     public String getPassword(){ return this.password; }
 
 }

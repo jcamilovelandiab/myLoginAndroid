@@ -11,14 +11,18 @@ import com.example.myapplication.data.Result;
 import com.example.myapplication.data.model.LoggedInUser;
 import com.example.myapplication.R;
 
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
+
 public class LoginViewModel extends ViewModel {
 
     private MutableLiveData<LoginFormState> loginFormState = new MutableLiveData<>();
     private MutableLiveData<LoginResult> loginResult = new MutableLiveData<>();
     private LoginRepository loginRepository;
 
-    LoginViewModel(LoginRepository loginRepository) {
-        this.loginRepository = loginRepository;
+
+    LoginViewModel() {
+        loginRepository = LoginRepository.getInstance();
     }
 
     LiveData<LoginFormState> getLoginFormState() {
@@ -28,21 +32,22 @@ public class LoginViewModel extends ViewModel {
         return loginResult;
     }
 
-    public void login(String username, String password) {
+    public void login(String email, String password) {
         // can be launched in a separate asynchronous job
-        Result<LoggedInUser> result = loginRepository.login(username, password);
+        loginRepository.login(this, email, password);
+    }
 
-        if (result instanceof Result.Success) {
-            LoggedInUser data = ((Result.Success<LoggedInUser>) result).getData();
-            loginResult.setValue(new LoginResult(new LoggedInUserView(data.getUsername())));
-        } else {
+    public void requestLoginCompleted(boolean error, LoggedInUser loggedInUser){
+        if(error && loggedInUser != null){
+            loginResult.setValue(new LoginResult(new LoggedInUserView(loggedInUser.getEmail())));
+        }else{
             loginResult.setValue(new LoginResult(R.string.login_failed));
         }
     }
 
-    public void loginDataChanged(String username, String password) {
-        if (!isUserNameValid(username)) {
-            loginFormState.setValue(new LoginFormState(R.string.invalid_username, null));
+    public void loginDataChanged(String email, String password) {
+        if (!isEmailValid(email)) {
+            loginFormState.setValue(new LoginFormState(R.string.invalid_email, null));
         } else if (!isPasswordValid(password)) {
             loginFormState.setValue(new LoginFormState(null, R.string.invalid_password));
         } else {
@@ -50,16 +55,15 @@ public class LoginViewModel extends ViewModel {
         }
     }
 
-    // A placeholder username validation check
-    private boolean isUserNameValid(String username) {
-        if (username == null) {
+    // A placeholder email validation check
+    private boolean isEmailValid(String email) {
+        if (email == null) {
             return false;
         }
-        if (username.contains("@")) {
-            return Patterns.EMAIL_ADDRESS.matcher(username).matches();
-        } else {
-            return !username.trim().isEmpty();
-        }
+        String expression = "^[\\w\\.-]+@([\\w\\-]+\\.)+[A-Z]{2,4}$";
+        Pattern pattern = Pattern.compile(expression, Pattern.CASE_INSENSITIVE);
+        Matcher matcher = pattern.matcher(email);
+        return matcher.matches();
     }
 
     // A placeholder password validation check

@@ -5,16 +5,16 @@ package com.example.myapplication.data.model;
  */
 public class LoggedInUser {
 
-    private String username;
+    private String email;
     private Token token;
 
-    public LoggedInUser(String username, Token token) {
-        this.username = username;
+    public LoggedInUser(String email, Token token) {
+        this.email = email;
         this.token = token;
     }
 
     public Token getToken(){ return token; }
 
-    public String getUsername(){ return username; }
+    public String getEmail(){ return email; }
 
 }
